@@ -8,17 +8,17 @@ user_input = st.text_input("You:")
 if user_input:
     st.info("⏳ Sending your message... Please wait...")
 
-    API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-large"
+    API_URL = "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct"
     headers = {
         "Authorization": f"Bearer {st.secrets['hf_token']}"
     }
 
-    prompt = f"Answer this as a helpful assistant: {user_input}"
+    prompt = f"{user_input}"
 
     payload = {
         "inputs": prompt,
         "parameters": {
-            "max_new_tokens": 100,
+            "max_new_tokens": 200,
             "temperature": 0.7
         }
     }
@@ -43,6 +43,7 @@ if user_input:
     except Exception as e:
         st.error("❌ Something went wrong:")
         st.exception(e)
+
 
 
 
