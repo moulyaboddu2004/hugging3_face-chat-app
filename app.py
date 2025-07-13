@@ -8,18 +8,18 @@ user_input = st.text_input("You:")
 if user_input:
     st.info("⏳ Sending your message... Please wait...")
 
-    API_URL = "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1"
+    API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-large"
     headers = {
-        "Authorization": f"Bearer {st.secrets['hf_token']}",
-        "Content-Type": "application/json"
+        "Authorization": f"Bearer {st.secrets['hf_token']}"
     }
 
+    prompt = f"Answer this as a helpful assistant: {user_input}"
+
     payload = {
-        "inputs": f"<s>[INST] {user_input} [/INST]",
+        "inputs": prompt,
         "parameters": {
             "max_new_tokens": 100,
-            "temperature": 0.7,
-            "do_sample": True
+            "temperature": 0.7
         }
     }
 
@@ -29,12 +29,12 @@ if user_input:
         data = response.json()
 
         try:
-            generated_text = data[0]["generated_text"]
-            assistant_reply = generated_text.split("[/INST]")[-1].strip()
+            answer = data[0]["generated_text"]
             st.success("🤖 Assistant:")
-            st.write(assistant_reply)
-        except Exception as parse_err:
+            st.write(answer.strip())
+        except Exception:
             st.error("❌ Couldn't parse the model response.")
+            st.write("Full response:")
             st.json(data)
 
     except requests.exceptions.HTTPError as http_err:
@@ -43,6 +43,7 @@ if user_input:
     except Exception as e:
         st.error("❌ Something went wrong:")
         st.exception(e)
+
 
 
 
